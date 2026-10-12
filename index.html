@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人生逆袭规划师</title>
+<style>
+  :root{
+    --bg:#eef2f9; --card:#ffffff; --ink:#1f2937; --sub:#64748b;
+    --line:#e7ecf3; --brand:#2f6df6; --brand2:#0ea5e9; --brand-d:#1d4ed8;
+    --ok:#15a34a; --warn:#e08a00; --bad:#e23b3b; --soft:#eef4ff;
+    --shadow:0 1px 3px rgba(16,24,40,.05),0 10px 30px rgba(16,24,40,.06);
+    --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+       background:radial-gradient(1200px 420px at 50% -140px,#dbe7ff 0%,rgba(219,231,255,0) 70%),var(--bg);
+       color:var(--ink);line-height:1.7;font-size:15px;-webkit-font-smoothing:antialiased}
+  header{position:relative;background:linear-gradient(120deg,#2f6df6,#19b6e8);color:#fff;
+    padding:30px 26px;max-width:1180px;margin:0 auto;border-radius:0 0 20px 20px;
+    box-shadow:var(--shadow);overflow:hidden}
+  header::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:rgba(255,255,255,.12);border-radius:50%}
+  header h1{margin:0;font-size:24px;letter-spacing:.5px}
+  header p{margin:10px 0 0;opacity:.92;font-size:13.5px}
+  .wrap{display:block;padding:22px 18px;max-width:1180px;margin:0 auto}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .left{width:100%;max-width:780px;margin:0 auto;position:static;max-height:none;overflow:visible}
+  .right{margin-top:22px;max-width:780px;margin-left:auto;margin-right:auto}
+  .bar{height:6px;background:#e9eef6;border-radius:99px;overflow:hidden;margin-bottom:18px;box-shadow:inset 0 1px 2px rgba(16,24,40,.06)}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#2f6df6,#19b6e8);width:11%;border-radius:99px;transition:width .35s ease}
+  .step{display:none;animation:fade .25s ease}
+  .step.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .q{position:relative;font-size:20px;font-weight:800;color:var(--ink);margin:0 0 6px;padding-left:50px;min-height:38px;display:flex;align-items:center}
+  .q::before{content:"🧭";position:absolute;left:0;top:0;width:38px;height:38px;border-radius:12px;
+    background:linear-gradient(135deg,#eaf1ff,#dbe9ff);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--shadow-sm)}
+  .qsub{font-size:13.5px;color:var(--sub);margin:0 0 18px;padding-left:50px;line-height:1.7}
+  .skip{display:inline-block;font-size:12px;color:var(--brand);background:var(--soft);border-radius:7px;
+    padding:2px 9px;margin-left:8px;cursor:pointer;font-weight:600;vertical-align:middle}
+  .skip:hover{background:#e0ecff}
+  label{display:block;font-size:13px;color:var(--sub);margin:14px 0 5px;font-weight:600}
+  input[type=number],input[type=text],select,textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;
+    font-size:14px;font-family:inherit;background:#fbfdff;color:var(--ink);transition:.15s}
+  input[type=number]:focus,input[type=text]:focus,select:focus,textarea:focus{
+    outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(47,109,246,.15);background:#fff}
+  textarea{resize:vertical;min-height:76px;line-height:1.6}
+  .checks{display:flex;flex-wrap:wrap;gap:9px;margin-top:6px}
+  .checks label{margin:0;font-weight:600;color:var(--ink);background:#f3f6fb;
+    padding:8px 14px;border-radius:22px;border:1px solid var(--line);cursor:pointer;font-size:13.5px;transition:.15s}
+  .checks label:hover{background:#eaf1ff;border-color:#c8dbff}
+  .checks input{display:none}
+  .checks input:checked + span{color:#fff;font-weight:700}
+  .checks label:has(input:checked){border-color:var(--brand);background:linear-gradient(135deg,#2f6df6,#4f8bff);color:#fff;box-shadow:0 4px 12px rgba(47,109,246,.3);transform:translateY(-1px)}
+  .checks label:has(input:checked) span{color:#fff}
+  .row{display:flex;gap:12px}
+  .row>div{flex:1}
+  .wiznav{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+  .wiznav .progtext{font-size:12.5px;color:var(--sub);flex:1;text-align:center;font-weight:600}
+  .aux{display:flex;gap:8px;margin-top:12px}
+  button{cursor:pointer;border:none;border-radius:11px;padding:11px 16px;font-size:14px;font-weight:700;font-family:inherit;transition:.15s}
+  .primary{background:linear-gradient(135deg,#2f6df6,#3f86ff);color:#fff;box-shadow:0 6px 16px rgba(47,109,246,.32)}
+  .primary:hover{background:linear-gradient(135deg,#1d4ed8,#2f6df6);transform:translateY(-1px);box-shadow:0 8px 20px rgba(47,109,246,.38)}
+  .primary:active{transform:translateY(0)}
+  .primary:disabled{background:#c3d2ee;box-shadow:none;cursor:not-allowed;color:#fff}
+  .ghost{background:#eef2f7;color:var(--ink)}
+  .ghost:hover{background:#e2eaf4}
+  .aux .ghost{padding:8px 10px;font-size:12.5px;flex:1}
+  .empty{color:var(--sub);text-align:center;padding:54px 24px;border:2px dashed var(--line);border-radius:16px;background:#fbfdff;font-size:14px;line-height:1.8}
+  .report h2{margin:0 0 6px;font-size:22px;font-weight:800}
+  .report .meta{color:var(--sub);font-size:13px;margin-bottom:16px}
+  .block{background:#fff;border:1px solid var(--line);border-left:5px solid var(--brand);
+    border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow-sm)}
+  .block h3{margin:0 0 10px;font-size:17px;font-weight:800;letter-spacing:.3px}
+  .block.diag{border-left-color:#6366f1}
+  .block.goals{border-left-color:var(--brand)}
+  .block.phase{border-left-color:var(--ok)}
+  .block.month{border-left-color:var(--brand2)}
+  .block.risk{border-left-color:var(--warn)}
+  .block.trap{border-left-color:var(--bad)}
+  ul{margin:8px 0;padding-left:22px}
+  li{margin:6px 0;line-height:1.7}
+  .lvl{font-weight:800}
+  .lvl.b{color:var(--ok)} .lvl.n{color:var(--brand)} .lvl.t{color:#7c3aed}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .gcard{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:linear-gradient(180deg,#f8fbff,#f3f8ff);transition:.15s}
+  .gcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .gcard h4{margin:0 0 6px;font-size:14.5px}
+  .num{font-weight:800;color:var(--brand)}
+  .tip{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;color:#92500e;font-size:13px;margin-top:10px;line-height:1.7}
+  footer{text-align:center;color:var(--sub);font-size:12px;padding:20px;max-width:1180px;margin:0 auto}
+  @media (max-width:920px){.left{max-width:100%}.right{max-width:100%}.grid3{grid-template-columns:1fr}}
+  @media print{
+    header,.left,footer,.wiznav,.aux,.bar{display:none!important}
+    body{background:#fff}.wrap{display:block;padding:0}
+    .right{padding:0}.block{break-inside:avoid;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🧭 人生逆袭规划师</h1>
+  <p>拒绝鸡汤画大饼 · 我来一步步问你，你照实答，最后给你一套落地逆袭方案</p>
+</header>
+
+<div class="wrap">
+  <!-- 左：分步提问 -->
+  <div class="panel left">
+    <div class="bar"><i id="bar"></i></div>
+
+    <!-- Step 1 -->
+    <div class="step active" data-step="0">
+      <div class="q">咱先从最基础的开始 👋</div>
+      <p class="qsub">你的年龄和性别？这决定了我给你规划的时间窗口长不长。</p>
+      <div class="row">
+        <div><label>年龄</label><input type="number" id="age" min="0" max="120" placeholder="如 36"></div>
+        <div><label>性别</label>
+          <select id="gender"><option value="男">男</option><option value="女">女</option><option value="其他">其他</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" data-step="1">
+      <div class="q">你的学历底子怎么样？</div>
+      <p class="qsub">最高学历，以及手上有没有拿得出手的证书 / 资格证。</p>
+      <label>最高学历</label>
+      <select id="education">
+        <option value="初中及以下">初中及以下</option>
+        <option value="高中">高中</option>
+        <option value="中专">中专</option>
+        <option value="大专">大专</option>
+        <option value="本科">本科</option>
+        <option value="硕士">硕士</option>
+        <option value="博士">博士</option>
+      </select>
+      <label>有无证书 / 资格证 <span class="skip" onclick="jump(2)">这步可跳过</span></label>
+      <input type="text" id="certificates" placeholder="如：教师资格证 / 无 / 电工证">
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step" data-step="2">
+      <div class="q">聊聊你过去都干过啥？</div>
+      <p class="qsub">工作 / 学习经历都行——做成过什么、又栽在过什么。成败都是资产。<span class="skip" onclick="jump(3)">可跳过</span></p>
+      <label>过往经历</label>
+      <textarea id="experience" placeholder="如：做过5年销售，后面打零工，创业失败一次欠了钱"></textarea>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step" data-step="3">
+      <div class="q">你现在会点啥本事？</div>
+      <p class="qsub">勾选你现有的技能（可多选）；要是没有，就勾「暂无」，咱们后面从零起步。</p>
+      <div class="checks" id="skillsBox">
+        <label><input type="checkbox" name="skills" value="编程技术"><span>编程技术</span></label>
+        <label><input type="checkbox" name="skills" value="写作内容"><span>写作内容</span></label>
+        <label><input type="checkbox" name="skills" value="沟通销售"><span>沟通销售</span></label>
+        <label><input type="checkbox" name="skills" value="管理"><span>管理</span></label>
+        <label><input type="checkbox" name="skills" value="手艺实操"><span>手艺实操</span></label>
+        <label><input type="checkbox" name="skills" value="外语"><span>外语</span></label>
+        <label><input type="checkbox" name="skills" value="设计"><span>设计</span></label>
+        <label><input type="checkbox" name="skills" value="数据分析"><span>数据分析</span></label>
+        <label><input type="checkbox" name="skills" value="无"><span>暂无</span></label>
+      </div>
+      <label>技能补充（软件 / 手艺 / 其他）</label>
+      <input type="text" id="skillNote" placeholder="如：会基础Excel、剪映、开车">
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step" data-step="4">
+      <div class="q">咱摸摸钱袋子 💰</div>
+      <p class="qsub">存款、负债、每月收入和支出。有负债别慌，这正是规划要重点解决的。</p>
+      <div class="row">
+        <div><label>存款（元）</label><input type="number" id="savings" min="0" placeholder="0"></div>
+        <div><label>负债（元）</label><input type="number" id="debt" min="0" placeholder="0"></div>
+      </div>
+      <div class="row">
+        <div><label>月收入（元）</label><input type="number" id="income" min="0" placeholder="4500"></div>
+        <div><label>月支出（元）</label><input type="number" id="expense" min="0" placeholder="4000"></div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step" data-step="5">
+      <div class="q">家里能给你兜底吗？</div>
+      <p class="qsub">家庭支持程度，以及有没有需要你负担的人 / 事。<span class="skip" onclick="jump(6)">可跳过</span></p>
+      <label>家庭支持程度</label>
+      <select id="familySupport">
+        <option value="能大力支持">能大力支持</option>
+        <option value="能部分支持">能部分支持</option>
+        <option value="基本不支持">基本不支持</option>
+        <option value="有负担拖累">有负担拖累</option>
+      </select>
+      <label>家庭负担 / 说明</label>
+      <textarea id="familyBurden" placeholder="如：需赡养父母、需养娃、基本靠自己"></textarea>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step" data-step="6">
+      <div class="q">你的身体和空闲时间？</div>
+      <p class="qsub">身体状态怎么样？每天大概能腾出几个小时给自己？</p>
+      <div class="row">
+        <div><label>身体状态</label>
+          <select id="health"><option value="良好">良好</option><option value="一般">一般</option><option value="有慢性病">有慢性病</option><option value="较差">较差</option></select>
+        </div>
+        <div><label>每天空闲（小时）</label><input type="number" id="freeHours" min="0" max="24" placeholder="3"></div>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step" data-step="7">
+      <div class="q">说说你这个人本身 🧠</div>
+      <p class="qsub">你的性格优势是什么？又有哪些容易拖后腿的毛病（可多选）。<span class="skip" onclick="jump(8)">可跳过</span></p>
+      <label>性格优势 / 软实力</label>
+      <textarea id="strengths" placeholder="如：肯吃苦、学习快、人缘好"></textarea>
+      <label>性格缺点（可多选）</label>
+      <div class="checks" id="weakBox">
+        <label><input type="checkbox" name="weakness" value="拖延"><span>拖延</span></label>
+        <label><input type="checkbox" name="weakness" value="社恐"><span>社恐</span></label>
+        <label><input type="checkbox" name="weakness" value="抗压差"><span>抗压差</span></label>
+        <label><input type="checkbox" name="weakness" value="三分钟热度"><span>三分钟热度</span></label>
+        <label><input type="checkbox" name="weakness" value="决策犹豫"><span>决策犹豫</span></label>
+      </div>
+      <label>缺点补充</label>
+      <input type="text" id="weakNote" placeholder="如：容易焦虑、注意力分散">
+    </div>
+
+    <!-- Step 9 -->
+    <div class="step" data-step="8">
+      <div class="q">最后，你最想逆袭成啥样？🎯</div>
+      <p class="qsub">你心里那个「成了」的画面是什么？收入、生活、事业都行，越具体越好。</p>
+      <label>你想要的逆袭结果</label>
+      <textarea id="goal" placeholder="如：还清12万债务，做到月入过万，有稳定可持续的事业"></textarea>
+    </div>
+
+    <!-- 导航 -->
+    <div class="wiznav">
+      <button class="ghost" id="prevBtn" onclick="prevStep()">← 上一步</button>
+      <span class="progtext" id="prog">第 1 / 9 步</span>
+      <button class="primary" id="nextBtn" onclick="nextStep()">下一步 →</button>
+    </div>
+    <div class="aux">
+      <button class="ghost" onclick="saveDraft()">💾 存草稿</button>
+      <button class="ghost" onclick="loadDraft()">📂 读草稿</button>
+      <button class="ghost" onclick="clearForm()">🧹 清空</button>
+    </div>
+  </div>
+
+  <!-- 右：报告 -->
+  <div class="right">
+    <div id="report">
+      <div class="empty">点「下一步」开始问答，答完最后一步即可生成你的专属逆袭规划。<br>左侧内容会自动记忆，下次打开可一键读取。</div>
+    </div>
+  </div>
+</div>
+
+<footer>本工具为结构化决策辅助，所有规划基于你填写的现实条件生成，不构成投资 / 医疗 / 法律建议。</footer>
+
+<script>
+/* ============ 工具函数 ============ */
+const $ = id => document.getElementById(id);
+const val = id => ($(id).value || '').trim();
+const num = id => { const v = parseFloat(val(id)); return isNaN(v) ? 0 : v; };
+const checks = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(e => e.value);
+const fmt = n => (Math.round(n)).toLocaleString('zh-CN');
+function li(arr){ return '<ul>' + arr.map(x => `<li>${x}</li>`).join('') + '</ul>'; }
+
+/* ============ 路由表 ============ */
+const WEAK_MAP = {
+  '拖延':'存在拖延倾向——规划会拆成极小颗粒度动作，并配外部约束（打卡 / 押金 / 结伴）对抗。',
+  '社恐':'偏社恐——路线自动避开强社交销售，倾向线上 / 写作 / 异步协作类路径。',
+  '抗压差':'抗压一般——优先选稳定现金流路径，阶梯式加压，每一步都预留退路。',
+  '三分钟热度':'容易三分钟热度——选“短期可见反馈”的事，降低启动门槛与放弃率。',
+  '决策犹豫':'容易决策犹豫——用“最小成本试错 + 设 deadline”替代完美规划，先动起来。'
+};
+function ageBand(a){
+  if(a<25) return '试错黄金期（可重仓学习 / 换赛道）';
+  if(a<=35) return '黄金窗口（体力精力在线，可冲能力资本积累）';
+  if(a<=45) return '杠杆期（靠技能 / 资源放大，忌从零苦力）';
+  return '稳健期（靠经验变现，不赌未知，优先现金流）';
+}
+function mainDirection(u){
+  const g = u.goal || '';
+  const sk = u.skills;
+  if(u.debt>0 && /债|还清|欠款/.test(g)) return 'debt';
+  if(/创业|事业|公司|老板|自由|独立|项目/.test(g)) return 'biz';
+  if(/学历|考研|考证|升学|文凭|读书/.test(g)) return 'edu';
+  if(/稳定|生活|平衡|安心|顾家/.test(g)) return 'stable';
+  if(sk.some(s=>['编程技术','数据分析','设计'].includes(s))) return 'tech';
+  if(sk.includes('写作内容')) return 'content';
+  if(sk.some(s=>['沟通销售','管理'].includes(s))) return 'sales';
+  if(sk.some(s=>['手艺实操','外语'].includes(s))) return 'craft';
+  return 'learn';
+}
+const DIR_TEXT = {
+  debt:'以「债务管控 + 稳健增收」为主线，不创业、不裸辞，先把现金流翻正再图发展。',
+  biz:'以「轻创业 / 事业」为主线，但采用“副业先验证、再渐进全职”的低成本打法，不All-in。',
+  edu:'以「学历 / 资格证提升」为主线，用证书撬开更高门槛的岗位与收入。',
+  stable:'以「稳现金流 + 抗风险」为主线，优先不下滑、再求小步跃迁。',
+  tech:'以「技术杠杆」为主线，靠编程 / 数据 / 设计接单、远程或产品化，放大单位时间价值。',
+  content:'以「内容杠杆」为主线，靠写作 / 短视频 / 知识付费做低启动成本的积累。',
+  sales:'以「沟通变现」为主线，靠销售 / 商务 / 轻服务把人脉与表达换成收入。',
+  craft:'以「手艺 / 实操」为主线，靠可交付的技能接单、线下服务或培训变现。',
+  learn:'当前无硬技能，主线定为「90 天技能从 0 到 1」，先锁定一项可快速上手变现的能力。'
+};
+
+/* ============ 诊断 ============ */
+function buildDiagnosis(u){
+  const adv=[], weak=[], cons=[];
+  if(u.skills.length && !u.skills.includes('无'))
+    adv.push(`已具备可变现技能方向：<b>${u.skills.join('、')}</b>${u.skillNote?`（${u.skillNote}）`:''}，可作为规划杠杆起点。`);
+  if(u.strengths) adv.push(`性格 / 软实力优势：${u.strengths}。`);
+  if(u.famSupport==='能大力支持'||u.famSupport==='能部分支持')
+    adv.push('有家庭支持作安全垫，容错空间更大，可适度提高进攻性。');
+  if(u.freeHours>=2) adv.push(`每天约 <b>${u.freeHours}</b> 小时可支配，足以支撑副业 / 学习投入。`);
+  else if(u.freeHours>0) adv.push(`每天仅约 ${u.freeHours} 小时空闲，必须高度聚焦，只做高杠杆动作。`);
+  if(u.health==='良好') adv.push('身体状态良好，能支撑高强度执行。');
+  if(u.exp) adv.push('有真实经历沉淀（成败都是资产），比纯小白更少踩坑。');
+
+  const eduLow = ['初中及以下','高中','中专'].includes(u.edu);
+  if(eduLow) weak.push(`学历短板（${u.edu}）：部分行业 / 岗位有硬门槛，需靠技能与证书绕开。`);
+  if(u.debt>0) weak.push(`负债 <b>${fmt(u.debt)}</b> 元，现金流承压，“债务不恶化”是一切规划的底线。`);
+  if(u.skills.includes('无')||u.skills.length===0) weak.push('暂无可快速变现的硬技能，前期要先完成“技能从 0 到 1”。');
+  u.weakness.forEach(w => weak.push(WEAK_MAP[w]));
+  if(u.weakNote) weak.push(`其他短板：${u.weakNote}。`);
+  if(u.famSupport==='有负担拖累') weak.push('家庭存在拖累，决策需优先自保，避免被无偿吸血。');
+  if(['有慢性病','较差'].includes(u.health)) weak.push(`身体状态${u.health}，规划要留足休息与医疗冗余，不拼体力。`);
+  if(u.freeHours===0) weak.push('当前几乎无空闲时间，只能靠“挤时间”和“换高薪赛道”腾出空间。');
+
+  const surplus = u.income - u.expense;
+  cons.push(`年龄 <b>${u.age}</b> 岁，时间窗口属于「${ageBand(u.age)}」。`);
+  cons.push(`月收支：收入 ${fmt(u.income)} − 支出 ${fmt(u.expense)} = 月结余 <b>${surplus>=0?'+':''}${fmt(surplus)}</b> 元。`);
+  if(u.debt>0){
+    if(surplus>0){ const m=Math.ceil(u.debt/surplus);
+      cons.push(`按当前结余，债务清零约需 <b>${m}</b> 个月（约 ${(m/12).toFixed(1)} 年）。`); }
+    else cons.push(`<span style="color:var(--bad)">当前结余为负，债务会持续扩大，必须立刻止血（增收 + 节流）。</span>`);
+  }
+  return {adv,weak,cons};
+}
+
+/* ============ 三档目标 ============ */
+function buildGoals(u){
+  const surplus=u.income-u.expense;
+  const normalInc=Math.max(Math.round(u.income*1.6), u.income+2000);
+  const topInc=Math.max(Math.round(u.income*3), 12000);
+  const dir=mainDirection(u);
+  let bottom, normal, top;
+
+  if(u.debt>0){
+    bottom=`债务不再扩大，月结余转正（哪怕每月只多 500 元），现有收入不崩盘，家庭不被拖垮。`;
+    const debtPayNormal=Math.max(2500, surplus+1500);
+    const monthsNormal=Math.ceil(u.debt/debtPayNormal);
+    normal=`通过副业 / 晋升把<b>月还债能力</b>提升到约 <span class="num">${fmt(debtPayNormal)}</span> 元，预计 <b>${monthsNormal}</b> 个月内清债；同期月总收入提升至约 <span class="num">${fmt(normalInc)}</span> 元，跑通一条副业 / 晋升的最小闭环。（注：若维持现状月结余，清债周期会拉长数倍，故“增收”是必选项而非可选项。）`;
+  }else{
+    bottom=`现有收入与生活质量不下滑，先攒出 <b>3–6 个月应急备用金</b>，形成稳定执行节奏。`;
+    normal=`月收入从 ${fmt(u.income)} 提升至约 <span class="num">${fmt(normalInc)}</span> 元（约 +${Math.round((normalInc/u.income-1)*100)}%），掌握 1 项可变现硬技能 / 证书。`;
+  }
+  const goalShort = (u.goal||'你定义的逆袭').slice(0,40);
+  top=`月收入冲击 <span class="num">${fmt(topInc)}</span> 以上，拥有可持续的主动收入来源（事业 / 产品 / 团队），真正兑现「${goalShort}」。`;
+
+  return {bottom,normal,top,dir};
+}
+
+/* ============ 分阶段 ============ */
+function buildPhases(u){
+  const surplus=u.income-u.expense;
+  const dir=mainDirection(u);
+  const dirText=DIR_TEXT[dir];
+  const shortCant = [
+    '不裸辞：在收入未翻倍前，保留主业现金流。',
+    '不All-in创业：任何生意先用副业 / 小成本验证，再谈放大。',
+    '不盲目考证：只考“能直接变现或硬门槛”的证，不为焦虑买单。'
+  ];
+  let shortCore=[];
+  if(u.debt>0){
+    shortCore=[
+      '列出全部债务清单（金额 / 利率 / 期限），优先还高息，协商降息或分期。',
+      '砍掉一切非必要支出，把月结余 100% 用于还债，建立“还债即存钱”的反馈。',
+      '锁定主攻方向：'+dirText,
+      `每天挤出 ${u.freeHours>0?u.freeHours:'1–2'} 小时做增收动作，不占用主业精力。`
+    ];
+  }else{
+    shortCore=[
+      '建立 3–6 个月应急备用金，先让抗风险底座稳下来。',
+      '锁定主攻方向：'+dirText,
+      '选定 1 项核心技能 / 渠道，集中火力，不贪多。',
+      `每天投入 ${u.freeHours>0?u.freeHours:'1–2'} 小时，形成固定节奏。`
+    ];
+  }
+  if(u.weakness.includes('拖延')) shortCore.push('对抗拖延：把任务拆到“5 分钟能开干”的颗粒度，配每日打卡。');
+  if(u.weakness.includes('社恐')) shortCore.push('已为你避开强社交路径，主攻线上 / 异步交付类动作。');
+
+  const midCore=[
+    `技能进阶：在「${u.skills.includes('无')||!u.skills.length?'选定后的技能':u.skills.join('、')}」上从“会”到“能卖钱”，做出可见作品 / 案例。`,
+    `收入提升：在主业晋升、副业变现或轻创业三条里跑通至少一条稳定现金流。`,
+    `资本积累：把每月盈余的 30%–50% 用于“能力再投资”（课程 / 工具 / 人脉），其余固化成储蓄 / 小资产。`,
+    u.debt>0? '中期前半段继续压债，债清后把原还债资金转为积累资金。' : '开始用备用金之外的余钱做低风险的“钱生钱”启蒙（指数基金定投等）。'
+  ];
+  const longCore=[
+    '事业 / 生活跃迁：把中期跑通的现金流放大为“系统”——可复制的团队、产品、渠道或被动收入。',
+    '身份跃迁：从“卖时间”转为“卖系统 / 卖决策”，单位时间价值指数级提升。',
+    '守住成果：建立家庭财务防火墙（保险 / 应急金 / 不熟不投），让逆袭可持续。'
+  ];
+
+  return {shortCore,shortCant,midCore,longCore,dirText};
+}
+
+/* ============ 月度清单 ============ */
+function buildMonthly(u){
+  const months=[];
+  const base=[
+    ['摸清家底','整理债务 / 收支 / 技能清单，定下主攻方向，写一张“不为清单”（不裸辞、不创业、不瞎考证）。'],
+    ['最小启动','围绕选定方向完成第一个微小交付（接一单 / 发第一篇 / 考第一科），拿到“已开干”的正反馈。'],
+    ['固化节奏','把每日投入时间钉进日程，建立打卡，开始积累作品 / 客户 / 作品集。'],
+    ['第一次增收','副业 / 技能产出第一笔钱，哪怕很少，验证路径成立。'],
+    ['复盘加码','淘汰无效动作，把时间加到高回报事项，扩大已验证的增收渠道。'],
+    ['闭环成型','主路径形成稳定小闭环，评估是否加大投入或引入第二曲线。']
+  ];
+  base.forEach((m,i)=> months.push({m:i+1,title:m[0],task:m[1]}));
+  if(u.debt>0){ months[0].task='列出全部债务（金额/利率/期限），协商降息分期，砍非必要支出，月结余全部还债。'; }
+  return months;
+}
+
+/* ============ 风险 & B计划 ============ */
+function buildRisk(u){
+  const risks=[];
+  if(u.debt>0) risks.push(['债务利息滚雪球','月结余转负时债务加速扩大。','B计划：立刻降支 + 谈延期 / 降息；必要时合规兼职增收，绝不借新还旧的高利贷。']);
+  if(u.weakness.includes('拖延')||u.weakness.includes('三分钟热度')) risks.push(['执行断断续续','热情退去后计划搁置。','B计划：把目标外包给环境（打卡群 / 押金制 / 结伴），用外部约束替你自律。']);
+  if(['有慢性病','较差'].includes(u.health)) risks.push(['身体亮红灯','高强度执行导致健康崩。','B计划：下调目标强度，保留休息冗余，把健康当“生产资产”维护。']);
+  risks.push(['行业 / 大环境波动','主业或副业收入受外部冲击。','B计划：永远保留主业现金流到逆袭目标达成前；副业多渠道，不把鸡蛋放一个篮子。']);
+  if(u.famSupport==='有负担拖累') risks.push(['家庭吸血','被动支出吞噬积累。','B计划：设立“个人财务隔离线”，对不合理索取温和但坚定地说不。']);
+  if(u.weakness.includes('决策犹豫')) risks.push(['迟迟不行动','在“选哪条路”里内耗。','B计划：用“最小成本试错”代替完美选择，先跑 2 周再决定。']);
+  if(risks.length===0) risks.push(['计划赶不上变化','任何长期规划都会遇突发。','B计划：每季度复盘一次，保留主业与备用金两条底线，不一条路走到黑。']);
+  return risks;
+}
+
+/* ============ 避坑 ============ */
+function buildTraps(u){
+  const t=[];
+  if(u.debt>0){
+    t.push('❌ 负债时绝不要裸辞创业——你输不起试错成本，先把现金流翻正。');
+    t.push('❌ 别用高息贷“以贷养贷”填坑，只会越陷越深。');
+  }
+  t.push('❌ 拒绝“一夜暴富 / 风口项目”——所有逆袭都是分步迭代，天上不会掉馅饼。');
+  t.push('❌ 别同时追 3 个以上方向，精力一分散，哪个都做不深。');
+  if(u.weakness.includes('拖延')) t.push('❌ 别等“状态好”再开始，状态是干出来的不是等出来的，先开 5 分钟。');
+  if(!u.cert || /无/.test(u.cert)) t.push('❌ 别为缓解焦虑狂考证，只考“能直接变现或硬门槛”的证。');
+  if(u.freeHours<2) t.push('❌ 时间极紧时别加新摊子，先把现有 1 件事做到出钱。');
+  t.push('❌ 别拿全部身家 All-in 单一机会，留好退路再进攻。');
+  return t;
+}
+
+/* ============ 渲染 ============ */
+function render(u, d, g, p, m, r, t){
+  let html = `<div class="report">
+    <h2>📋 你的逆袭规划方案</h2>
+    <div class="meta">${u.age}岁 / ${u.gender} / ${u.edu} / 主攻方向：${DIR_TEXT[g.dir].slice(0,18)}… · 生成于浏览器本地，数据不上传</div>`;
+
+  html += `<div class="block diag"><h3>📋 现状深度诊断</h3>
+    <p class="lvl b">✅ 你的优势 / 资产</p>${li(d.adv.length?d.adv:['暂未填写明显优势，可从经历中挖掘。'])}
+    <p class="lvl t">⚠️ 硬短板（规划会绕开，不要求你变完美）</p>${li(d.weak.length?d.weak:['暂无显著短板。'])}
+    <p class="lvl n">🔒 现实约束</p>${li(d.cons)}</div>`;
+
+  html += `<div class="block goals"><h3>🎯 三档目标设定</h3>
+    <div class="grid3">
+      <div class="gcard"><h4 class="lvl b">🔹 保底目标</h4><p>${g.bottom}</p></div>
+      <div class="gcard"><h4 class="lvl n">🔸 正常目标</h4><p>${g.normal}</p></div>
+      <div class="gcard"><h4 class="lvl t">🔺 逆袭目标</h4><p>${g.top}</p></div>
+    </div></div>`;
+
+  html += `<div class="block phase"><h3>🗓️ 分阶段落地规划</h3>
+    <p><b>【短期 0–6 个月：生存打底】</b></p>${li(p.shortCore)}
+    <p style="color:var(--bad);font-size:13px;margin:8px 0 0">🚫 短期不能做的事：</p>${li(p.shortCant)}
+    <p><b>【中期 1–3 年：能力 & 资本积累】</b></p>${li(p.midCore)}
+    <p><b>【长期 3–5 年：跃迁逆袭】</b></p>${li(p.longCore)}</div>`;
+
+  let mh='<div class="block month"><h3>✅ 月度可执行清单（前 6 个月）</h3><ul>';
+  m.forEach(x=> mh+=`<li><b>第 ${x.m} 个月 · ${x.title}</b>：${x.task}</li>`);
+  mh+='</ul><div class="tip">之后每 6 个月复盘一次，按实际进展平移 / 加码，不僵化执行。</div></div>';
+  html += mh;
+
+  let rh='<div class="block risk"><h3>⚠️ 风险预警 & B 备选方案</h3><ul>';
+  r.forEach(x=> rh+=`<li><b>${x[0]}</b>：${x[1]}<br><span style="color:var(--ok)">↳ B计划</span>：${x[2]}</li>`);
+  rh+='</ul></div>';
+  html += rh;
+
+  html += `<div class="block trap"><h3>❌ 一定要避开的陷阱</h3>${li(t)}</div>`;
+
+  html += `<div class="block"><h3>🔁 进度复盘</h3>
+    <p style="font-size:13px;color:var(--sub)">把本月“完成 / 未完成”填在这里，点按钮获取下一阶段调整建议（基于你的性格短板生成）。</p>
+    <textarea id="review" placeholder="如：第2个月，副业接了2单共800元，但考证没开始，拖延又犯了"></textarea>
+    <div style="margin-top:8px"><button class="ghost" onclick="runReview()">获取复盘建议</button></div>
+    <div id="reviewOut"></div></div>`;
+
+  html += `</div>`;
+  $('report').innerHTML = html;
+}
+
+/* ============ 复盘 ============ */
+function runReview(){
+  const u=buildUser();
+  const txt=(val('review')||'');
+  let out=['<ul>'];
+  if(u.weakness.includes('拖延')||/拖延/.test(txt)) out.push('你提到拖延复发——把下月任务拆到“每天 5 分钟能开干”，加一个外部约束（打卡群 / 押金 / 结伴），别靠意志硬扛。');
+  if(u.debt>0) out.push('债务未清前，任何“新机会”都先用“不增加支出、不借新债”过滤，增收优先还债。');
+  if(/没开始|没做|放弃|中断/.test(txt)) out.push('有事项没启动——按“最小成本试错”原则，先做一个能 1 周内看到结果的小动作，用反馈续命。');
+  if(/接单|收入|赚|副业/.test(txt)) out.push('已有增收验证——下月把时间向已验证渠道倾斜，淘汰不产出的动作，尝试把客单价 / 复购做上去。');
+  out.push('建议：带着更新后的月收入 / 负债数字，重新点一次「生成逆袭规划」，让方案随现实迭代。');
+  out.push('</ul>');
+  $('reviewOut').innerHTML=out.join('');
+}
+
+/* ============ 向导导航 ============ */
+let cur=0;
+const steps=()=>Array.from(document.querySelectorAll('.step'));
+function showStep(n){
+  const all=steps(); cur=Math.max(0,Math.min(n,all.length-1));
+  all.forEach((s,i)=> s.classList.toggle('active', i===cur));
+  const total=all.length;
+  $('bar').style.width=((cur+1)/total*100)+'%';
+  $('prog').textContent=`第 ${cur+1} / ${total} 步`;
+  $('prevBtn').disabled=(cur===0);
+  const last=(cur===total-1);
+  const nb=$('nextBtn');
+  if(last){ nb.textContent='🚀 生成逆袭规划'; nb.onclick=generate; }
+  else { nb.textContent='下一步 →'; nb.onclick=nextStep; }
+}
+function nextStep(){ showStep(cur+1); }
+function prevStep(){ showStep(cur-1); }
+function jump(n){ showStep(n); }   // 跳过此步
+
+/* ============ 主流程 ============ */
+function generate(){
+  const u=buildUser();
+  const errs=[];
+  if(!u.age) errs.push('请在第 1 步填写年龄');
+  if(!u.income) errs.push('请在第 5 步填写月收入');
+  if(!u.expense) errs.push('请在第 5 步填写月支出');
+  if(!u.goal) errs.push('请在第 9 步填写你想要的逆袭结果');
+  if(errs.length){ $('report').innerHTML=`<div class="empty" style="color:var(--bad)">⚠️ ${errs.join('、')}</div>`; return; }
+  saveDraft(true);
+  render(u, buildDiagnosis(u), buildGoals(u), buildPhases(u), buildMonthly(u), buildRisk(u), buildTraps(u));
+  $('report').scrollIntoView({behavior:'smooth'});
+}
+function buildUser(){
+  return {
+    age:num('age'), gender:val('gender'), edu:val('education'), cert:val('certificates'),
+    exp:val('experience'), skills:checks('skills'), skillNote:val('skillNote'),
+    savings:num('savings'), debt:num('debt'), income:num('income'), expense:num('expense'),
+    famSupport:val('familySupport'), famBurden:val('familyBurden'),
+    health:val('health'), freeHours:num('freeHours'),
+    strengths:val('strengths'), weakness:checks('weakness'), weakNote:val('weakNote'),
+    goal:val('goal')
+  };
+}
+/* ============ 草稿 ============ */
+const KEY='lifeplanner_draft_v1';
+function saveDraft(silent){
+  const f={};
+  ['age','gender','education','certificates','experience','skillNote','savings','debt','income',
+   'expense','familySupport','familyBurden','health','freeHours','strengths','weakNote','goal']
+   .forEach(id=> f[id]=$(id).value);
+  f.skills=checks('skills'); f.weakness=checks('weakness');
+  localStorage.setItem(KEY, JSON.stringify(f));
+  if(!silent) alert('已保存草稿到本机浏览器');
+}
+function loadDraft(){
+  const raw=localStorage.getItem(KEY); if(!raw){ alert('没有找到已保存的草稿'); return; }
+  const f=JSON.parse(raw);
+  Object.keys(f).forEach(k=>{ if(k==='skills'||k==='weakness') return;
+    if($(k)) $(k).value=f[k]; });
+  (f.skills||[]).forEach(v=>{ const el=document.querySelector(`input[name="skills"][value="${v}"]`); if(el)el.checked=true; });
+  (f.weakness||[]).forEach(v=>{ const el=document.querySelector(`input[name="weakness"][value="${v}"]`); if(el)el.checked=true; });
+  alert('已读取草稿');
+}
+function clearForm(){
+  if(!confirm('确定清空所有填写内容？（草稿不受影响，除非你点存草稿）')) return;
+  ['age','certificates','experience','skillNote','savings','debt','income','expense',
+   'familyBurden','strengths','weakNote','goal'].forEach(id=> $(id).value='');
+  document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=false);
+  showStep(0);
+}
+showStep(0);
+</script>
+</body>
+</html>
